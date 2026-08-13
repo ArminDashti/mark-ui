@@ -40,13 +40,11 @@ const slugTouched = ref(false)
 
 const title = computed(() => kindTitle(props.kind))
 const plural = computed(() => kindPlural(props.kind))
-
-const filtered = computed(() => {
-  const q = query.value.trim().toLowerCase()
-  if (!q) return items.value
-  return items.value.filter(
-    (row) => row.name.toLowerCase().includes(q) || row.slug.toLowerCase().includes(q),
-  )
+const emptyLabel = computed(() => {
+  if (query.value.trim()) {
+    return `No ${plural.value.toLowerCase()} match that search.`
+  }
+  return `No ${plural.value.toLowerCase()} yet.`
 })
 
 function kindTitle(kind: MarkKind): string {
@@ -87,7 +85,7 @@ async function load() {
   loading.value = true
   errorMessage.value = null
   try {
-    items.value = await fetchMarks(props.kind)
+    items.value = await fetchMarks(props.kind, query.value)
   } catch (err) {
     errorMessage.value = err instanceof Error ? err.message : 'Could not load marks'
   } finally {
@@ -185,17 +183,35 @@ async function copyUrl(row: MarkRow) {
   }, 1500)
 }
 
-onMounted(() => {
-  void load()
-})
+let searchTimer: ReturnType<typeof setTimeout> | null = null
+
+function scheduleLoad(delayMs: number) {
+  if (searchTimer) {
+    clearTimeout(searchTimer)
+  }
+  searchTimer = setTimeout(() => {
+    void load()
+  }, delayMs)
+}
 
 watch(
   () => props.kind,
   () => {
-    query.value = ''
-    void load()
+    if (query.value !== '') {
+      query.value = ''
+      return
+    }
+    scheduleLoad(0)
   },
 )
+
+watch(query, () => {
+  scheduleLoad(query.value.trim() === '' ? 0 : 300)
+})
+
+onMounted(() => {
+  void load()
+})
 </script>
 
 <template>
@@ -223,12 +239,12 @@ watch(
       {{ errorMessage }}
     </p>
 
-    <div v-if="!loading && filtered.length === 0" class="text-sm text-muted-foreground">
-      No {{ plural.toLowerCase() }} yet.
+    <div v-if="!loading && items.length === 0" class="text-sm text-muted-foreground">
+      {{ emptyLabel }}
     </div>
 
     <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      <Card v-for="row in filtered" :key="row.id">
+      <Card v-for="row in items" :key="row.id">
         <CardHeader class="pb-2">
           <CardTitle class="truncate">{{ row.name }}</CardTitle>
           <CardDescription class="font-mono text-xs">/m/{{ row.kind }}/{{ row.slug }}</CardDescription>

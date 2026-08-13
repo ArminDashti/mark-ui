@@ -103,8 +103,11 @@ export function login(body: { username: string; password: string }): Promise<Aut
   })
 }
 
-export function fetchMarks(kind: MarkKind): Promise<MarkRow[]> {
-  return apiFetch<MarkRow[]>(`/api/v1/marks?kind=${encodeURIComponent(kind)}`, {}, true)
+export function fetchMarks(kind: MarkKind, q = ''): Promise<MarkRow[]> {
+  const params = new URLSearchParams({ kind })
+  const query = q.trim()
+  if (query) params.set('q', query)
+  return apiFetch<MarkRow[]>(`/api/v1/marks?${params.toString()}`, {}, true)
 }
 
 export function createMark(form: FormData): Promise<MarkRow> {

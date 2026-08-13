@@ -1,0 +1,8 @@
+*.exe
+.env
+.armin/
+.cursor/
+node_modules/
+dist/
+*.log
+dev-dist/

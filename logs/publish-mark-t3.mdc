@@ -1,0 +1,10 @@
+# Publish mark-ui on Irancell-T3
+
+Date: 2026-08-13
+
+See `../mark-api/logs/publish-mark-t3.mdc` for the full report.
+
+- Stack: `mark-ui`
+- Domain: `mark.xaigrok.ir` → `mark-ui:80` on `t3-net`
+- Image: `mark-ui:latest`
+- HAProxy route live (HUP); HTTPS Let's Encrypt blocked on NXDOMAIN

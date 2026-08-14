@@ -6,3 +6,6 @@ node_modules/
 dist/
 *.log
 dev-dist/
+
+# BEGIN AUTO-MANAGED LARGE FILES (>5MB)
+# END AUTO-MANAGED LARGE FILES

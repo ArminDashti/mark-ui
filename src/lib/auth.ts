@@ -31,8 +31,8 @@ const USER_KEY = 'mark-user'
 
 export const API_BASE = (() => {
   const raw = import.meta.env.VITE_API_BASE_URL as string | undefined
-  if (raw === undefined || raw === '') return ''
-  return raw.replace(/\/$/, '')
+  if (raw !== undefined && raw !== '') return raw.replace(/\/$/, '')
+  return (import.meta.env.BASE_URL || '/').replace(/\/$/, '')
 })()
 
 export function getToken(): string | null {

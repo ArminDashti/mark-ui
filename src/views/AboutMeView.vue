@@ -61,10 +61,6 @@ onMounted(() => {
           This application was written by AI agents—specifically Cursor—guided by Armin’s intent,
           then tempered by his review until fit to ship.
         </p>
-        <p>
-          The work is practical: Golang services, Vue-based front ends, and PostgreSQL, chosen for
-          substance over spectacle. He watches carefully, plans deliberately, and ships when ready.
-        </p>
       </div>
     </div>
 
